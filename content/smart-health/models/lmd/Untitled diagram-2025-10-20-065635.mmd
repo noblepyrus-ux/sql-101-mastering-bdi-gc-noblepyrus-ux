@@ -1,0 +1,230 @@
+erDiagram
+
+    PACIENTE {
+        int PacienteID PK
+        string PrimerNombre
+        string SegundoNombre
+        string PrimerApellido
+        string SegundoApellido
+        date FechaNacimiento
+        string Sexo
+        string Email
+        date FechaRegistro
+        boolean Activo
+    }
+
+    PACIENTE_DOCUMENTO {
+        int DocumentoID PK
+        int PacienteID FK
+        int TipoDocumentoID FK
+        string NumeroDocumento
+        string PaisEmisor
+        date FechaEmision
+    }
+
+    PACIENTE_DIRECCION {
+        int DireccionID PK
+        int PacienteID FK
+        string TipoDireccion
+        string Departamento
+        string Municipio
+        string DireccionTexto
+        string CoordenadasLat
+        string CoordenadasLon
+        string CodigoPostal
+    }
+
+    TELEFONO {
+        int TelefonoID PK
+        int PacienteID FK
+        string TipoTelefono
+        string Numero
+        boolean Principal
+    }
+
+    CONTACTO_EMERGENCIA {
+        int ContactoEmergenciaID PK
+        int PacienteID FK
+        string Nombre
+        string Parentesco
+        string Telefono
+        string Email
+        string Instrucciones
+    }
+
+    MEDICO {
+        int MedicoID PK
+        string CodigoInterno
+        string NumeroColegiatura
+        string Nombres
+        string Apellidos
+        string EmailProfesional
+        date FechaIngresoHospital
+        boolean Activo
+    }
+
+    MEDICO_ESPECIALIDAD {
+        int MedicoID FK
+        int EspecialidadID FK
+    }
+
+    MEDICO_DIRECCION {
+        int MedicoDireccionID PK
+        int MedicoID FK
+        string Tipo
+        string Departamento
+        string Municipio
+        string DireccionTexto
+        string HorarioAtencion
+    }
+
+    MEDICO_TELEFONO {
+        int MedicoTelefonoID PK
+        int MedicoID FK
+        string TipoTelefono
+        string Numero
+    }
+
+    HORARIO_MEDICO {
+        int HorarioID PK
+        int MedicoID FK
+        string DiaSemana
+        time HoraInicio
+        time HoraFin
+        string Modalidad
+    }
+
+    CITA {
+        int CitaID PK
+        int PacienteID FK
+        int MedicoID FK
+        date Fecha
+        time HoraInicio
+        time HoraFin
+        string TipoAtencion
+        string Estado
+        string SalaID
+        string Motivo
+        string CreadaPor
+        date FechaCreacion
+    }
+
+    HISTORIA_CLINICA {
+        int HistoriaID PK
+        int PacienteID FK
+        datetime FechaHoraRegistro
+        string TipoRegistro
+        string ResumenTexto
+        json ResumenEstructurado
+        int ProfesionalID FK
+        int DiagnosticoPrincipalID FK
+    }
+
+    HISTORIA_DIAGNOSTICO {
+        int HistoriaID FK
+        int DiagnosticoID FK
+    }
+
+    PRESCRIPCION {
+        int PrescripcionID PK
+        int HistoriaID FK
+        int MedicamentoID FK
+        string Detalle
+    }
+
+    SIGNO_VITAL {
+        int SignoVitalID PK
+        int HistoriaID FK
+        string Tipo
+        string Valor
+        datetime FechaHora
+    }
+
+    DIAGNOSTICO {
+        int DiagnosticoID PK
+        string CodigoCIE
+        string Descripcion
+    }
+
+    MEDICAMENTO {
+        int MedicamentoID PK
+        string CodigoATC
+        string NombreComercial
+        string PrincipioActivo
+        string Presentacion
+    }
+
+    PROCEDIMIENTO {
+        int ProcedimientoID PK
+        string Codigo
+        string Descripcion
+        decimal PrecioReferencia
+    }
+
+    ASEGURADORA {
+        int AseguradoraID PK
+        string Nombre
+        string Contacto
+    }
+
+    POLIZA {
+        int PolizaID PK
+        int PacienteID FK
+        int AseguradoraID FK
+        string NumeroPoliza
+        string CoberturaResumen
+        date FechaInicio
+        date FechaFin
+        string Estado
+    }
+
+    AUDITORIA {
+        int AuditoriaID PK
+        int UsuarioID
+        string Rol
+        string Entidad
+        int EntidadID
+        string Accion
+        json Detalle
+        datetime Timestamp
+        string IP
+        string Aplicacion
+    }
+
+    TIPO_DOCUMENTO {
+        int TipoDocumentoID PK
+        string Nombre
+    }
+
+    ESPECIALIDAD {
+        int EspecialidadID PK
+        string Nombre
+    }
+
+    %% Relaciones principales
+    PACIENTE ||--o{ PACIENTE_DOCUMENTO : tiene
+    PACIENTE ||--o{ PACIENTE_DIRECCION : tiene
+    PACIENTE ||--o{ TELEFONO : tiene
+    PACIENTE ||--o{ CONTACTO_EMERGENCIA : tiene
+    PACIENTE ||--o{ CITA : agenda
+    PACIENTE ||--o{ HISTORIA_CLINICA : posee
+    PACIENTE ||--o{ POLIZA : tiene
+
+    MEDICO ||--o{ CITA : atiende
+    MEDICO ||--o{ MEDICO_ESPECIALIDAD : tiene
+    MEDICO ||--o{ MEDICO_DIRECCION : tiene
+    MEDICO ||--o{ MEDICO_TELEFONO : tiene
+    MEDICO ||--o{ HORARIO_MEDICO : programa
+    MEDICO ||--o{ HISTORIA_CLINICA : autor
+
+    HISTORIA_CLINICA ||--o{ HISTORIA_DIAGNOSTICO : referencia
+    HISTORIA_CLINICA ||--o{ PRESCRIPCION : genera
+    HISTORIA_CLINICA ||--o{ SIGNO_VITAL : contiene
+
+    HISTORIA_DIAGNOSTICO }o--|| DIAGNOSTICO : usa
+    PRESCRIPCION }o--|| MEDICAMENTO : usa
+    POLIZA }o--|| ASEGURADORA : pertenece
+    PACIENTE_DOCUMENTO }o--|| TIPO_DOCUMENTO : usa
+    MEDICO_ESPECIALIDAD }o--|| ESPECIALIDAD : referencia
+
+  
